@@ -11,6 +11,9 @@
         "psr-4": {
             "PDSSUtilities\\": "PDSSUtilities/src/"
         }
+    },
+    {
+        "license": "MIT"
     }
 
 }
