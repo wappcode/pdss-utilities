@@ -2,9 +2,9 @@
     "name": "wappcode/pdss-utilities",
     "description": "Utilidades para PHP Doctrine Server Side",
     "type": "library",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "require": {
-        "php": "^7.1",
+        "php": ">7.1",
         "doctrine/orm": "^2.10.2"
     },
     "autoload": {
