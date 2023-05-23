@@ -15,8 +15,11 @@ class QueryFilter
     const CONDITION_NOT_LIKE = 'NOT_LIKE';
     const CONDITION_BETWEEN = 'BETWEEN';
     const CONDITION_EQUAL = 'EQUAL';
+    const CONDITION_EQUAL_ALIAS = '=';
     const CONDITION_NOT_EQUAL = 'NOT_EQUAL';
+    const CONDITION_NOT_EQUAL_ALIAS = '!=';
     const CONDITION_DIFFERENT = 'DIFFERENT';
+    const CONDITION_DIFFERENT_ALIAS = '<>';
     const CONDITION_IN = 'IN';
     const CONDITION_NOT_IN = 'NOT_IN';
     const CONDITION_IS_NULL = 'IS_NULL';
@@ -25,6 +28,10 @@ class QueryFilter
     const CONDITION_GREATER_EQUAL_THAN = 'GREATER_EQUAL_THAN';
     const CONDITION_LESS_THAN = 'LESS_THAN';
     const CONDITION_LESS_EQUAL_THAN = 'LESS_EQUAL_THAN';
+    const CONDITION_GREATER_THAN_ALIAS = '>';
+    const CONDITION_GREATER_EQUAL_THAN_ALIAS = '>=';
+    const CONDITION_LESS_THAN_ALIAS = '<';
+    const CONDITION_LESS_EQUAL_THAN_ALIAS = '<=';
     const LOGIC_AND = 'AND';
     const LOGIC_OR = 'OR';
     /**
@@ -115,6 +122,9 @@ class QueryFilter
 
     protected static function addConditionParameter(QueryBuilder $qb, $alias, $condition)
     {
+        if ($condition["type"] === static::CONDITION_IS_NULL || $condition["type"] === static::CONDITION_IS_NOT_NULL) {
+            return;
+        }
         $errorMsg = 'La condición no tiene un valor adecuado';
         $values = $condition["values"] ?? null;
         $value = $condition["value"] ?? null;
@@ -152,15 +162,15 @@ class QueryFilter
             $not = true;
             return static::createConditionLike($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_EQUAL) {
+        if ($type === static::CONDITION_EQUAL || $type === static::CONDITION_EQUAL_ALIAS) {
             $not = $condition["not"] ?? false;
             return static::createConditionEqual($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_NOT_EQUAL) {
+        if ($type === static::CONDITION_NOT_EQUAL || $type === static::CONDITION_NOT_EQUAL_ALIAS) {
             $not = true;
             return static::createConditionEqual($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_DIFFERENT) {
+        if ($type === static::CONDITION_DIFFERENT || $type === static::CONDITION_DIFFERENT_ALIAS) {
 
             return static::createConditioDifferentThan($alias, $condition);
         }
@@ -183,16 +193,16 @@ class QueryFilter
             $not = true;
             return static::createConditionIsNull($alias, $condition, $not, $qb);
         }
-        if ($type === static::CONDITION_GREATER_THAN) {
+        if ($type === static::CONDITION_GREATER_THAN || $type === static::CONDITION_GREATER_THAN_ALIAS) {
             return static::createConditioGreaterThan($alias, $condition);
         }
-        if ($type === static::CONDITION_GREATER_EQUAL_THAN) {
+        if ($type === static::CONDITION_GREATER_EQUAL_THAN || $type === static::CONDITION_GREATER_EQUAL_THAN_ALIAS) {
             return static::createConditioGreaterEqualThan($alias, $condition);
         }
-        if ($type === static::CONDITION_LESS_THAN) {
+        if ($type === static::CONDITION_LESS_THAN || $type === static::CONDITION_LESS_THAN_ALIAS) {
             return static::createConditioLessThan($alias, $condition);
         }
-        if ($type === static::CONDITION_LESS_EQUAL_THAN) {
+        if ($type === static::CONDITION_LESS_EQUAL_THAN || $type === static::CONDITION_LESS_EQUAL_THAN_ALIAS) {
             return static::createConditioLessEqualThan($alias, $condition);
         }
         throw new Exception('El tipo de condicion no existe');
@@ -227,16 +237,16 @@ class QueryFilter
 
         if ($not) {
             $property = sprintf("%s.%s", $alias, $column);
-            return $qb->expr()->isNull($property);
+            return $qb->expr()->isNotNull($property);
         } else {
             $property = sprintf("%s.%s", $alias, $column);
-            return $qb->expr()->isNotNull($property);
+            return $qb->expr()->isNull($property);
         }
     }
     protected static function createConditionBetween(string $alias, array $condition): string
     {
         $property = $condition["property"];
-        $value = $condition["value"];
+        $value = $condition["values"];
         if (!is_array($value) || count($value) !== 2) {
             throw new Exception('Formato incorrecto el valor debe ser un array de strings para condición Between');
         }
