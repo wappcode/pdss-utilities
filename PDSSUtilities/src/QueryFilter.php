@@ -2,8 +2,8 @@
 
 namespace PDSSUtilities;
 
-use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Utilidades para aplicar filtros en un Query dependiendo de los parámetros de la solicitud http

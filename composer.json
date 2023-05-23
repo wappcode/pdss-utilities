@@ -1,8 +1,8 @@
 {
+    "version": "1.0.7",
     "name": "wappcode/pdss-utilities",
     "description": "Utilidades para PHP Doctrine Server Side",
     "type": "library",
-    "version": "1.0.7",
     "require": {
         "php": ">7.1",
         "doctrine/orm": "^2.10.2"
@@ -10,6 +10,20 @@
     "autoload": {
         "psr-4": {
             "PDSSUtilities\\": "PDSSUtilities/src/"
+        }
+    },
+    "require-dev": {
+        "doctrine/dbal": "3.1.4",
+        "doctrine/annotations": "^1.13",
+        "symfony/yaml": "2.*",
+        "symfony/cache": "^5.3",
+        "phpunit/phpunit": "^10"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AppLibrary\\": "dev/library/",
+            "AppEntities\\": "dev/entities/",
+            "AppTest\\": "dev/tests/"
         }
     },
     "license": "MIT"
