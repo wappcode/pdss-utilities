@@ -1,5 +1,4 @@
 {
-    "version": "1.0.8",
     "name": "wappcode/pdss-utilities",
     "description": "Utilidades para PHP Doctrine Server Side",
     "type": "library",
