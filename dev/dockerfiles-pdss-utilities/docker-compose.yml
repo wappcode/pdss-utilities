@@ -19,7 +19,7 @@ services:
       #  XDEBUG_CONFIG: remote_host=172.17.0.1 remote_port=9000 remote_enable=1
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9001 remote_enable=1 start_with_request=yes
     volumes: 
-      - ..:/var/www/html
+      - ../..:/var/www/html
       - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     ports: 
       - "80:80"
