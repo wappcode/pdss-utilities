@@ -44,7 +44,7 @@ class QueryFilter
      *           "conditionsLogic" => 'AND',
      *           "conditions" => [
      *               [
-     *                   "type" => 'like',
+     *                   "filterOperator" => 'like',
      *                   "value" =>["single"=>"xxxx"] | ["many"=>["xxxx","yyyy"]],
      *                   "property" => 'xxxx',
      *                   "onJoinedProperty" => 'xxxx' // los joins se deben agregar previamente
@@ -120,26 +120,26 @@ class QueryFilter
 
     protected static function addConditionParameter(QueryBuilder $qb, $alias, $condition)
     {
-        if ($condition["type"] === static::CONDITION_IS_NULL || $condition["type"] === static::CONDITION_IS_NOT_NULL) {
+        if ($condition["filterOperator"] === static::CONDITION_IS_NULL || $condition["filterOperator"] === static::CONDITION_IS_NOT_NULL) {
             return;
         }
         $errorMsg = 'La condición no tiene un valor adecuado';
         $values = $condition["value"]["many"] ?? null;
         $value = $condition["value"]["single"] ?? null;
-        if ($condition["type"] === static::CONDITION_BETWEEN) {
+        if ($condition["filterOperator"] === static::CONDITION_BETWEEN) {
             if (empty($values) || !is_array($values) || count($values) !== 2) {
                 throw new Exception($errorMsg);
             }
             $parameters = static::getParameterKeyBetween($alias, $condition);
             $qb->setParameter($parameters[0], $values[0]);
             $qb->setParameter($parameters[1], $values[1]);
-        } elseif ($condition["type"] === static::CONDITION_IN || $condition["type"] === static::CONDITION_NOT_IN) {
+        } elseif ($condition["filterOperator"] === static::CONDITION_IN || $condition["filterOperator"] === static::CONDITION_NOT_IN) {
             if (empty($values) || !is_array($values)) {
                 throw new Exception($errorMsg);
             }
             $parameter = static::getParameterKey($alias, $condition);
             $qb->setParameter($parameter, $values);
-        } elseif ($condition["type"] !== static::CONDITION_IS_NULL && $condition !== static::CONDITION_IS_NOT_NULL) {
+        } elseif ($condition["filterOperator"] !== static::CONDITION_IS_NULL && $condition !== static::CONDITION_IS_NOT_NULL) {
             if (!isset($value) || $value === null ||  (is_string($value) && trim($value) === "")) {
                 throw new Exception($errorMsg);
             }
@@ -151,56 +151,56 @@ class QueryFilter
     protected static function createCondition(string $rootAlias, array $condition, QueryBuilder $qb): string
     {
         $alias = static::calculateAlias($rootAlias, $condition);
-        $type = $condition["type"];
-        if ($type === static::CONDITION_LIKE) {
+        $filterOperator = $condition["filterOperator"];
+        if ($filterOperator === static::CONDITION_LIKE) {
             $not =  false;
             return static::createConditionLike($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_NOT_LIKE) {
+        if ($filterOperator === static::CONDITION_NOT_LIKE) {
             $not = true;
             return static::createConditionLike($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_EQUAL || $type === static::CONDITION_EQUAL_ALIAS) {
+        if ($filterOperator === static::CONDITION_EQUAL || $filterOperator === static::CONDITION_EQUAL_ALIAS) {
             $not =  false;
             return static::createConditionEqual($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_NOT_EQUAL || $type === static::CONDITION_NOT_EQUAL_ALIAS) {
+        if ($filterOperator === static::CONDITION_NOT_EQUAL || $filterOperator === static::CONDITION_NOT_EQUAL_ALIAS) {
             $not = true;
             return static::createConditionEqual($alias, $condition, $not);
         }
-        if ($type === static::CONDITION_DIFFERENT || $type === static::CONDITION_DIFFERENT_ALIAS) {
+        if ($filterOperator === static::CONDITION_DIFFERENT || $filterOperator === static::CONDITION_DIFFERENT_ALIAS) {
 
             return static::createConditioDifferentThan($alias, $condition);
         }
-        if ($type === static::CONDITION_BETWEEN) {
+        if ($filterOperator === static::CONDITION_BETWEEN) {
             return static::createConditionBetween($alias, $condition);
         }
-        if ($type === static::CONDITION_IN) {
+        if ($filterOperator === static::CONDITION_IN) {
             $not =  false;
             return static::createConditionIn($alias, $condition, $not, $qb);
         }
-        if ($type === static::CONDITION_NOT_IN) {
+        if ($filterOperator === static::CONDITION_NOT_IN) {
             $not = true;
             return static::createConditionIn($alias, $condition, $not, $qb);
         }
-        if ($type === static::CONDITION_IS_NULL) {
+        if ($filterOperator === static::CONDITION_IS_NULL) {
             $not = false;
             return static::createConditionIsNull($alias, $condition, $not, $qb);
         }
-        if ($type === static::CONDITION_IS_NOT_NULL) {
+        if ($filterOperator === static::CONDITION_IS_NOT_NULL) {
             $not = true;
             return static::createConditionIsNull($alias, $condition, $not, $qb);
         }
-        if ($type === static::CONDITION_GREATER_THAN || $type === static::CONDITION_GREATER_THAN_ALIAS) {
+        if ($filterOperator === static::CONDITION_GREATER_THAN || $filterOperator === static::CONDITION_GREATER_THAN_ALIAS) {
             return static::createConditioGreaterThan($alias, $condition);
         }
-        if ($type === static::CONDITION_GREATER_EQUAL_THAN || $type === static::CONDITION_GREATER_EQUAL_THAN_ALIAS) {
+        if ($filterOperator === static::CONDITION_GREATER_EQUAL_THAN || $filterOperator === static::CONDITION_GREATER_EQUAL_THAN_ALIAS) {
             return static::createConditioGreaterEqualThan($alias, $condition);
         }
-        if ($type === static::CONDITION_LESS_THAN || $type === static::CONDITION_LESS_THAN_ALIAS) {
+        if ($filterOperator === static::CONDITION_LESS_THAN || $filterOperator === static::CONDITION_LESS_THAN_ALIAS) {
             return static::createConditioLessThan($alias, $condition);
         }
-        if ($type === static::CONDITION_LESS_EQUAL_THAN || $type === static::CONDITION_LESS_EQUAL_THAN_ALIAS) {
+        if ($filterOperator === static::CONDITION_LESS_EQUAL_THAN || $filterOperator === static::CONDITION_LESS_EQUAL_THAN_ALIAS) {
             return static::createConditioLessEqualThan($alias, $condition);
         }
         throw new Exception('El tipo de condicion no existe');

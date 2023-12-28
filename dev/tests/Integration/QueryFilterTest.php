@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_filterOperators=1);
 
 namespace AppTest\Integration;
 
@@ -21,7 +21,7 @@ final class QueryFilterTest extends TestCase
                 "conditionsLogic" => 'AND',
                 "conditions" => [
                     [
-                        "type" => 'GREATER_THAN',
+                        "filterOperator" => 'GREATER_THAN',
                         "value" => ['single' => '5'],
                         "property" => 'id',
                     ]
@@ -32,7 +32,7 @@ final class QueryFilterTest extends TestCase
     public function testGreaterThan()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_GREATER_THAN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_GREATER_THAN;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -43,7 +43,7 @@ final class QueryFilterTest extends TestCase
     public function testGreaterThanAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_GREATER_THAN_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_GREATER_THAN_ALIAS;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -54,7 +54,7 @@ final class QueryFilterTest extends TestCase
     public function testGreaterEqualThan()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_GREATER_EQUAL_THAN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_GREATER_EQUAL_THAN;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -65,7 +65,7 @@ final class QueryFilterTest extends TestCase
     public function testGreaterEqualThanAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_GREATER_EQUAL_THAN_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_GREATER_EQUAL_THAN_ALIAS;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -76,7 +76,7 @@ final class QueryFilterTest extends TestCase
     public function testLessThan()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_LESS_THAN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_LESS_THAN;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -87,7 +87,7 @@ final class QueryFilterTest extends TestCase
     public function testLessThanAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_LESS_THAN_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_LESS_THAN_ALIAS;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -98,7 +98,7 @@ final class QueryFilterTest extends TestCase
     public function testLessEqualThan()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_LESS_EQUAL_THAN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_LESS_EQUAL_THAN;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -109,7 +109,7 @@ final class QueryFilterTest extends TestCase
     public function testLessEqualThanAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_LESS_EQUAL_THAN_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_LESS_EQUAL_THAN_ALIAS;
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
         $qb = QueryFilter::addFilters($qb, $filter);
@@ -120,7 +120,7 @@ final class QueryFilterTest extends TestCase
     public function testLike()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_LIKE;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_LIKE;
         $filter[0]["conditions"][0]["value"]['single'] = '%Cespedes';
         $filter[0]["conditions"][0]["property"] = 'name';
         $entityManager = EntityManagerFactory::getInstance();
@@ -133,7 +133,7 @@ final class QueryFilterTest extends TestCase
     public function testNotLike()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_NOT_LIKE;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_NOT_LIKE;
         $filter[0]["conditions"][0]["value"]['single'] = '%Cespedes';
         $filter[0]["conditions"][0]["property"] = 'name';
         $entityManager = EntityManagerFactory::getInstance();
@@ -146,7 +146,7 @@ final class QueryFilterTest extends TestCase
     public function testBetween()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_BETWEEN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_BETWEEN;
         $filter[0]["conditions"][0]["value"]['many'] = ["1", "3"];
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -158,7 +158,7 @@ final class QueryFilterTest extends TestCase
     public function testEqual()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_EQUAL;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_EQUAL;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -170,7 +170,7 @@ final class QueryFilterTest extends TestCase
     public function testEqualAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_EQUAL_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_EQUAL_ALIAS;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -182,7 +182,7 @@ final class QueryFilterTest extends TestCase
     public function testNotEqual()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_NOT_EQUAL;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_NOT_EQUAL;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -194,7 +194,7 @@ final class QueryFilterTest extends TestCase
     public function testNotEqualAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_NOT_EQUAL;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_NOT_EQUAL;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -206,7 +206,7 @@ final class QueryFilterTest extends TestCase
     public function testDifferent()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_DIFFERENT;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_DIFFERENT;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -218,7 +218,7 @@ final class QueryFilterTest extends TestCase
     public function testDifferentAlias()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_DIFFERENT_ALIAS;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_DIFFERENT_ALIAS;
         $filter[0]["conditions"][0]["value"]['single'] = "1";
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -230,7 +230,7 @@ final class QueryFilterTest extends TestCase
     public function testIn()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_IN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_IN;
         $filter[0]["conditions"][0]["value"]['many'] = ["1", "3"];
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -242,7 +242,7 @@ final class QueryFilterTest extends TestCase
     public function testNotIn()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_NOT_IN;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_NOT_IN;
         $filter[0]["conditions"][0]["value"]['many'] = ["1", "3"];
         $entityManager = EntityManagerFactory::getInstance();
         $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
@@ -254,7 +254,7 @@ final class QueryFilterTest extends TestCase
     public function testIsNull()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_IS_NULL;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_IS_NULL;
         $filter[0]["conditions"][0]["property"] = 'role';
         unset($filter[0]["conditions"][0]["value"], $filter[0]["conditions"][0]["value"]);
         $entityManager = EntityManagerFactory::getInstance();
@@ -267,7 +267,7 @@ final class QueryFilterTest extends TestCase
     public function testIsNotNull()
     {
         $filter = $this->filterBase;
-        $filter[0]["conditions"][0]["type"] = QueryFilter::CONDITION_IS_NOT_NULL;
+        $filter[0]["conditions"][0]["filterOperator"] = QueryFilter::CONDITION_IS_NOT_NULL;
         $filter[0]["conditions"][0]["property"] = 'role';
         unset($filter[0]["conditions"][0]["value"]);
         $entityManager = EntityManagerFactory::getInstance();
