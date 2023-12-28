@@ -4,12 +4,8 @@
          bootstrap="dev/tests/bootstrap.php"
          colors="true">
     <testsuites>
-        <testsuite name="unit">
-            <directory>dev/tests/unit</directory>
-        </testsuite>
-
         <testsuite name="integration">
-            <directory>dev/tests/integration</directory>
+            <directory>dev/tests/Integration</directory>
         </testsuite>
     </testsuites>
 </phpunit>

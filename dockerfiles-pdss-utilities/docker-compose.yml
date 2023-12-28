@@ -1,0 +1,43 @@
+version: '3.7'
+services: 
+  pdss-utilities-mysql:
+    container_name: pdss-utilities-mysql8
+    image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PDSSUTILITIES_DBPASSWORD:-dbpassword}
+    ports:
+      - "${PDSSUTILITIES_MYSQL_PORT:-3308}:3306"
+    platform: linux/x86_64
+    volumes:
+      - ~/opt/dockerMysql8.0.28:/var/lib/mysql
+    healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 5s
+            retries: 60
+  pdss-utilities-php:
+    depends_on:
+      pdss-utilities-mysql:
+        condition: service_healthy
+    container_name: pdss-utilities-php7.3
+    image: jesusabarcag/php-dev:php7.3
+    volumes: 
+      - ..:/var/www/html
+      - ./sites-enabled:/etc/apache2/sites-enabled
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./commands:/home/commands
+    ports: 
+      - "${PDSSUTILITIES_APP_PORT:-8080}:8080"
+    entrypoint: sh -c "/home/commands/run.sh"
+    restart: "no"
+    platform: linux/x86_64
+    environment:
+      - PDSSUTILITIES_APP_PORT=${PDSSUTILITIES_APP_PORT:-8080}
+      - PDSSUTILITIES_DBUSER=${PDSSUTILITIES_DBUSER:-root}
+      - PDSSUTILITIES_DBPASSWORD=${PDSSUTILITIES_DBPASSWORD:-dbpassword}
+      - PDSSUTILITIES_DBNAME=${PDSSUTILITIES_DBNAME:-pdss_utilities}
+      - PDSSUTILITIES_DRIVER=${PDSSUTILITIES_DRIVER:-pdo_mysql}
+      - PDSSUTILITIES_DBHOST=pdss-utilities-mysql
+      #  XDEBUG_CONFIG: remote_host=172.17.0.1 remote_port=9000 remote_enable=1
+      - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001 remote_enable=1 start_with_request=yes

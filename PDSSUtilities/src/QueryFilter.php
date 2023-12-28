@@ -11,23 +11,23 @@ use Doctrine\ORM\QueryBuilder;
 class QueryFilter
 {
 
+    const CONDITION_EQUAL = 'EQUAL';
+    const CONDITION_NOT_EQUAL = 'NOT_EQUAL';
+    const CONDITION_BETWEEN = 'BETWEEN';
+    const CONDITION_GREATER_THAN = 'GREATER_THAN';
+    const CONDITION_LESS_THAN = 'LESS_THAN';
+    const CONDITION_GREATER_EQUAL_THAN = 'GREATER_EQUAL_THAN';
+    const CONDITION_LESS_EQUAL_THAN = 'LESS_EQUAL_THAN';
     const CONDITION_LIKE = 'LIKE';
     const CONDITION_NOT_LIKE = 'NOT_LIKE';
-    const CONDITION_BETWEEN = 'BETWEEN';
-    const CONDITION_EQUAL = 'EQUAL';
-    const CONDITION_EQUAL_ALIAS = '=';
-    const CONDITION_NOT_EQUAL = 'NOT_EQUAL';
-    const CONDITION_NOT_EQUAL_ALIAS = '!=';
-    const CONDITION_DIFFERENT = 'DIFFERENT';
-    const CONDITION_DIFFERENT_ALIAS = '<>';
     const CONDITION_IN = 'IN';
     const CONDITION_NOT_IN = 'NOT_IN';
-    const CONDITION_IS_NULL = 'IS_NULL';
+    const CONDITION_DIFFERENT = 'DIFFERENT';
     const CONDITION_IS_NOT_NULL = 'IS_NOT_NULL';
-    const CONDITION_GREATER_THAN = 'GREATER_THAN';
-    const CONDITION_GREATER_EQUAL_THAN = 'GREATER_EQUAL_THAN';
-    const CONDITION_LESS_THAN = 'LESS_THAN';
-    const CONDITION_LESS_EQUAL_THAN = 'LESS_EQUAL_THAN';
+    const CONDITION_IS_NULL = 'IS_NULL';
+    const CONDITION_EQUAL_ALIAS = '=';
+    const CONDITION_NOT_EQUAL_ALIAS = '!=';
+    const CONDITION_DIFFERENT_ALIAS = '<>';
     const CONDITION_GREATER_THAN_ALIAS = '>';
     const CONDITION_GREATER_EQUAL_THAN_ALIAS = '>=';
     const CONDITION_LESS_THAN_ALIAS = '<';
@@ -45,11 +45,9 @@ class QueryFilter
      *           "conditions" => [
      *               [
      *                   "type" => 'like',
-     *                   "value" => 'xxx',
-     *                   "values" => ['xxx',"yyy"],
+     *                   "value" =>["single"=>"xxxx"] | ["many"=>["xxxx","yyyy"]],
      *                   "property" => 'xxxx',
-     *                   "not" => true, // solo algunos tipos @deprecated 1.0.7
-     *                   "joinedAlias" => 'xxxx' // los joins se deben agregar previamente
+     *                   "onJoinedProperty" => 'xxxx' // los joins se deben agregar previamente
      *               ]
      *           ]
      *       ]
@@ -126,8 +124,8 @@ class QueryFilter
             return;
         }
         $errorMsg = 'La condición no tiene un valor adecuado';
-        $values = $condition["values"] ?? null;
-        $value = $condition["value"] ?? null;
+        $values = $condition["value"]["many"] ?? null;
+        $value = $condition["value"]["single"] ?? null;
         if ($condition["type"] === static::CONDITION_BETWEEN) {
             if (empty($values) || !is_array($values) || count($values) !== 2) {
                 throw new Exception($errorMsg);
@@ -155,7 +153,7 @@ class QueryFilter
         $alias = static::calculateAlias($rootAlias, $condition);
         $type = $condition["type"];
         if ($type === static::CONDITION_LIKE) {
-            $not = $condition["not"] ?? false;
+            $not =  false;
             return static::createConditionLike($alias, $condition, $not);
         }
         if ($type === static::CONDITION_NOT_LIKE) {
@@ -163,7 +161,7 @@ class QueryFilter
             return static::createConditionLike($alias, $condition, $not);
         }
         if ($type === static::CONDITION_EQUAL || $type === static::CONDITION_EQUAL_ALIAS) {
-            $not = $condition["not"] ?? false;
+            $not =  false;
             return static::createConditionEqual($alias, $condition, $not);
         }
         if ($type === static::CONDITION_NOT_EQUAL || $type === static::CONDITION_NOT_EQUAL_ALIAS) {
@@ -178,7 +176,7 @@ class QueryFilter
             return static::createConditionBetween($alias, $condition);
         }
         if ($type === static::CONDITION_IN) {
-            $not = $condition["not"] ?? false;
+            $not =  false;
             return static::createConditionIn($alias, $condition, $not, $qb);
         }
         if ($type === static::CONDITION_NOT_IN) {
@@ -186,7 +184,7 @@ class QueryFilter
             return static::createConditionIn($alias, $condition, $not, $qb);
         }
         if ($type === static::CONDITION_IS_NULL) {
-            $not = $condition["not"] ?? false;
+            $not = false;
             return static::createConditionIsNull($alias, $condition, $not, $qb);
         }
         if ($type === static::CONDITION_IS_NOT_NULL) {
@@ -246,7 +244,7 @@ class QueryFilter
     protected static function createConditionBetween(string $alias, array $condition): string
     {
         $property = $condition["property"];
-        $value = $condition["values"];
+        $value = $condition["value"]["many"];
         if (!is_array($value) || count($value) !== 2) {
             throw new Exception('Formato incorrecto el valor debe ser un array de strings para condición Between');
         }
@@ -305,7 +303,7 @@ class QueryFilter
 
     protected static function calculateAlias(string $rootAlias, array $condition): string
     {
-        $alias = (isset($condition["joinedAlias"]) && !empty($condition["joinedAlias"])) ?  $condition["joinedAlias"] : $rootAlias;
+        $alias = (isset($condition["onJoinedProperty"]) && !empty($condition["onJoinedProperty"])) ?  $condition["onJoinedProperty"] : $rootAlias;
         return $alias;
     }
     protected static function getParameterKeyBetween(string $rootAlias, array $condition): array

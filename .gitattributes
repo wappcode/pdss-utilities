@@ -2,3 +2,4 @@ dev/    export-ignore
 dev-docs/    export-ignore
 cli-config.php  export-ignore 
 phpunit.xmls  export-ignore 
+dockerfiles-pdss-utilities export-ignore
