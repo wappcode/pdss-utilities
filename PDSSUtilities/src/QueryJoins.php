@@ -19,10 +19,10 @@ class QueryJoins
      * Ejemplo de formato de join
      * $joins = [
      *  [
-     *      "type": 'LEFT_JOIN|INNER_JOIN|RIGHT_JOIN'
+     *      "joinType": 'LEFT_JOIN|INNER_JOIN|RIGHT_JOIN'
      *      "alias": 'xxxx',
      *      "property": 'xxxx', 
-     *      "joinedAlias" => 'xxxx' // los joins se deben agregar previamente (alias de un join agregado previamente)
+     *      "joinedProperty" => 'xxxx' // los joins se deben agregar previamente (alias de un join agregado previamente)
      *  ]
      * ]
      *
@@ -45,7 +45,7 @@ class QueryJoins
 
     private static function addJoin(QueryBuilder $qb, array $item, $rootAlias) {
         $alias =   static::calculateAlias($rootAlias, $item);
-        $type = $item["type"] ?? static::LEFT_JOIN;
+        $type = $item["joinType"] ?? static::LEFT_JOIN;
         $property = $item["property"];
         $propertyAlias = $item["alias"] ?? $property;
         if ($type === static::INNER_JOIN) {
@@ -55,7 +55,7 @@ class QueryJoins
         }
     }
     protected static function calculateAlias(string $rootAlias, array $item): string {
-        $alias = (isset($item["joinedAlias"]) && !empty($item["joinedAlias"])) ?  $item["joinedAlias"] :$rootAlias ;
+        $alias = (isset($item["joinedProperty"]) && !empty($item["joinedProperty"])) ?  $item["joinedProperty"] :$rootAlias ;
         return $alias;
     }
 
