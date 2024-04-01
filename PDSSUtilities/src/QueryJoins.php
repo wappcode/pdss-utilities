@@ -11,8 +11,8 @@ use Doctrine\ORM\QueryBuilder;
 class QueryJoins
 {
 
-    const LEFT_JOIN = 'LEFT_JOIN'; // valor predeterminado
-    const INNER_JOIN = 'INNER_JOIN';
+    const LEFT_JOIN = 'LEFT'; // valor predeterminado
+    const INNER_JOIN = 'INNER';
     /**
      * Agrega joins en el orden en que se encuentran a un query doctrine
      * 
