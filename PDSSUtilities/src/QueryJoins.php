@@ -21,7 +21,7 @@ class QueryJoins
      *  [
      *      "type": 'LEFT_JOIN|INNER_JOIN|RIGHT_JOIN'
      *      "alias": 'xxxx',
-     *      "joinedProperty": 'xxxx', 
+     *      "property": 'xxxx', 
      *      "joinedAlias" => 'xxxx' // los joins se deben agregar previamente (alias de un join agregado previamente)
      *  ]
      * ]
@@ -46,7 +46,7 @@ class QueryJoins
     private static function addJoin(QueryBuilder $qb, array $item, $rootAlias) {
         $alias =   static::calculateAlias($rootAlias, $item);
         $type = $item["type"] ?? static::LEFT_JOIN;
-        $property = $item["joinedProperty"];
+        $property = $item["property"];
         $propertyAlias = $item["alias"] ?? $property;
         if ($type === static::INNER_JOIN) {
             $qb->innerJoin("{$alias}.{$property}", $propertyAlias);
