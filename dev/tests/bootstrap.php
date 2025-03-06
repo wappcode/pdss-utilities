@@ -12,8 +12,6 @@ $entityManager = EntityManagerFactory::createInstance($options, $cacheDir, true,
 
 $users = $entityManager->getRepository(User::class)->findAll();
 if (count($users) == 0) {
-    $insterFile = __DIR__ . "/data/db_initial_data.sql";
-    $sql = file_get_contents($insterFile);
-    $conn = $entityManager->getConnection()->getWrappedConnection();
-    $conn->exec($sql);
+
+    throw new Exception("No hay usuarios registrados en la base de datos para poder hacer pruebas");
 }

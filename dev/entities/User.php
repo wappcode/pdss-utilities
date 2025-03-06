@@ -5,48 +5,25 @@ namespace AppEntities;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="users")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "users")]
 class User
 {
 
-    /**
-     * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     * 
-     */
-    protected $id;
 
-
-    /**
-     * @ORM\Column(type="string", nullable=false, length=255, name="name")
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @ORM\Column(type="string",nullable=true,length=255,name="role")
-     *
-     * @var string
-     */
-    protected $role;
-
-
-    /**
-     * @var DateTime
-     * @ORM\Column(type="datetime")
-     */
-    protected $birthday;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: "integer")]
+    protected int $id;
+    #[ORM\Column(type: "string", nullable: false, length: 255, name: "name")]
+    protected string $name;
+    #[ORM\Column(type: "string", nullable: true, length: 255, name: "role")]
+    protected ?string $role;
+    #[ORM\Column(type: "datetime")]
+    protected DateTime $birthday;
 
     /**
      * Get the value of id
-     *
-     * @return  int
      */
     public function getId()
     {
@@ -54,9 +31,19 @@ class User
     }
 
     /**
-     * Get the value of name
+     * Set the value of id
      *
-     * @return  string
+     * @return  self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of name
      */
     public function getName()
     {
@@ -66,11 +53,9 @@ class User
     /**
      * Set the value of name
      *
-     * @param  string  $name
-     *
      * @return  self
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -78,9 +63,27 @@ class User
     }
 
     /**
-     * Get the value of birthday
+     * Get the value of role
+     */
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set the value of role
      *
-     * @return  DateTime
+     * @return  self
+     */
+    public function setRole(?string $role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of birthday
      */
     public function getBirthday()
     {
@@ -90,37 +93,11 @@ class User
     /**
      * Set the value of birthday
      *
-     * @param  DateTime  $birthday
-     *
      * @return  self
      */
-    public function setBirthday(DateTime $birthday)
+    public function setBirthday($birthday)
     {
         $this->birthday = $birthday;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of role
-     *
-     * @return  string
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * Set the value of role
-     *
-     * @param  string  $role
-     *
-     * @return  self
-     */
-    public function setRole(string $role)
-    {
-        $this->role = $role;
 
         return $this;
     }

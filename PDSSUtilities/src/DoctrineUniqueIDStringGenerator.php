@@ -2,12 +2,12 @@
 
 namespace PDSSUtilities;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
 
 class DoctrineUniqueIDStringGenerator extends AbstractIdGenerator
 {
-    public function generate(EntityManager $em, $entity)
+    public function generateId(EntityManagerInterface $em, object|null $entity): mixed
     {
         $randomStr = $this->randomString(3);
         $prefix =  rand() . "__";

@@ -10,4 +10,4 @@ VALUES
 ('3', 'Antonio Jesus Guerra', '1978-12-07',null),
 ('4', 'Ricardo Pina', '1990-02-27',null),
 ('5', 'Eliseo Abad', '1975-07-03',null),
-('6', 'Angel Castello', '1998-10-08',null)
+('6', 'Angel Castello', '1998-10-08',null);

@@ -3,3 +3,5 @@ dev-docs/    export-ignore
 cli-config.php  export-ignore 
 phpunit.xmls  export-ignore 
 dockerfiles-pdss-utilities export-ignore
+.vscode export-ignore
+bin export-ignore
