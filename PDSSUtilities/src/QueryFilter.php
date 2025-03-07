@@ -118,11 +118,12 @@ class QueryFilter
             $conditionBaseQuery = static::combineConditions($qb, $conditionBaseQuery, $conditionQuery, $conditionLogic);
             static::addConditionParameter($qb, $alias, $condition);
         }
+        $condition = null;
         // Agrega las condiciones compuestas las condiciones compuestas se consideran igual que un grupo
-        array_walk($compoundConditions, function ($group) use ($alias, $qb, &$conditionBaseQuery, $conditionLogic) {
+        foreach ($compoundConditions as $group) {
             $condition = static::createGroupCondition($qb, $group, $alias);
             $conditionBaseQuery = static::combineConditions($qb, $conditionBaseQuery, $condition, $conditionLogic);
-        });
+        }
 
         return $conditionBaseQuery;
     }

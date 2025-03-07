@@ -41,12 +41,12 @@ y reemplazar por
 Para VSCode agregar la siguiente configuración en launch.json
 
      {
-            "name": "Listen for Xdebug",
+            "name": "Docker Listen for Xdebug",
             "type": "php",
             "request": "launch",
             "port": 9003,
             "pathMappings": {
                 "/var/www/html": "${workspaceFolder}"
             },
-            "hostname": "localhost" // se agrega solo para wsl windows para que funcione
+            //"hostname": "localhost" // se agrega solo para wsl windows para que funcione
     },
