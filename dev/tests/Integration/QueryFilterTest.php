@@ -277,4 +277,149 @@ final class QueryFilterTest extends TestCase
 
         $this->assertEquals(2, $total, "Test CONDITION_IS_NOT_NULL");
     }
+    public function testComposeCondition()
+    {
+        $filter = $this->filterBase;
+        unset($filter[0]["conditions"]);
+        $filter[0]["compoundConditions"][0] = [
+            "conditionsLogic" => "OR",
+            "conditions" =>
+            [
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Edgar%'],
+                    "property" => 'name',
+                ],
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Bernat%'],
+                    "property" => 'name',
+                ],
+
+            ]
+        ];
+        $entityManager = EntityManagerFactory::getInstance();
+        $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
+        $qb = QueryFilter::addFilters($qb, $filter);
+        $total = $qb->getQuery()->getSingleScalarResult();
+
+        $this->assertEquals(2, $total, "Test CompouseCondition");
+    }
+    public function testComposeConditionAndNormalCondition()
+    {
+        $filter = $this->filterBase;
+        $filter[0]["compoundConditions"][0] = [
+            "conditionsLogic" => "OR",
+            "conditions" =>
+            [
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Edgar%'],
+                    "property" => 'name',
+                ],
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Angel%'],
+                    "property" => 'name',
+                ],
+
+            ]
+        ];
+        $entityManager = EntityManagerFactory::getInstance();
+        $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
+        $qb = QueryFilter::addFilters($qb, $filter);
+        $total = $qb->getQuery()->getSingleScalarResult();
+
+        $this->assertEquals(1, $total, "Test CompouseCondition");
+    }
+    public function testComposeConditionAndSubComposeCondition()
+    {
+        $filter = $this->filterBase;
+        unset($filter[0]["conditions"]);
+        $filter[0]["compoundConditions"][0] = [
+            "conditionsLogic" => "OR",
+            "conditions" =>
+            [
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Edgar%'],
+                    "property" => 'name',
+                ],
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Angel%'],
+                    "property" => 'name',
+                ],
+            ],
+            "compoundConditions" => [
+                [
+                    "conditionsLogic" => "AND",
+                    "conditions" => [
+                        [
+                            "filterOperator" => QueryFilter::CONDITION_IS_NULL,
+                            "value" => [],
+                            "property" => 'role',
+                        ],
+                        [
+                            "filterOperator" => QueryFilter::CONDITION_EQUAL,
+                            "value" => ['single' => "6"],
+                            "property" => 'id',
+                        ],
+                    ]
+                ]
+            ]
+        ];
+        $entityManager = EntityManagerFactory::getInstance();
+        $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
+        $qb = QueryFilter::addFilters($qb, $filter);
+        $total = $qb->getQuery()->getSingleScalarResult();
+
+        $this->assertEquals(2, $total, "Test CompouseCondition");
+    }
+    public function testDoubleeComposeCondition()
+    {
+        $filter = $this->filterBase;
+        unset($filter[0]["conditions"]);
+        $filter[0]["compoundConditions"][0] = [
+            "conditionsLogic" => "OR",
+            "conditions" =>
+            [
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Edgar%'],
+                    "property" => 'name',
+                ],
+                [
+                    "filterOperator" => QueryFilter::CONDITION_LIKE,
+                    "value" => ['single' => '%Angel%'],
+                    "property" => 'name',
+                ],
+            ],
+
+        ];
+        $filter[0]["compoundConditions"][1] = [
+            "conditionsLogic" => "AND",
+            "conditions" =>
+            [
+                [
+                    "filterOperator" => QueryFilter::CONDITION_IS_NULL,
+                    "value" => [],
+                    "property" => 'role',
+                ],
+                [
+                    "filterOperator" => QueryFilter::CONDITION_EQUAL,
+                    "value" => ['single' => '6'],
+                    "property" => 'id',
+                ],
+            ],
+
+        ];
+
+        $entityManager = EntityManagerFactory::getInstance();
+        $qb = $entityManager->createQueryBuilder()->from(User::class, 'user')->select("COUNT(user.id)");
+        $qb = QueryFilter::addFilters($qb, $filter);
+        $total = $qb->getQuery()->getSingleScalarResult();
+
+        $this->assertEquals(1, $total, "Test CompouseCondition");
+    }
 }

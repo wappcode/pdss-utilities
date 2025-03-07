@@ -49,6 +49,18 @@ class QueryFilter
      *                   "property" => 'xxxx',
      *                   "onJoinedProperty" => 'xxxx' // los joins se deben agregar previamente
      *               ]
+     *           ],
+     *           "compoundConditions"=>[[
+     *              "conditionsLogic" => 'AND'
+     *              "conditions" =>[
+     *               [
+     *                   "filterOperator" => 'like',
+     *                   "value" =>["single"=>"xxxx"] | ["many"=>["xxxx","yyyy"]],
+     *                   "property" => 'xxxx',
+     *                   "onJoinedProperty" => 'xxxx' // los joins se deben agregar previamente
+     *               ],
+     *              "compoundConditions"=>[]
+     *              ]
      *           ]
      *       ]
      *   ];
@@ -92,18 +104,27 @@ class QueryFilter
     {
 
         $conditionLogic = $group["conditionsLogic"] ?? static::LOGIC_AND;
-        $conditions = $group["conditions"];
+        $conditions = $group["conditions"] ?? [];
+        $compoundConditions = $group["compoundConditions"] ?? [];
         if (empty($conditions)) {
-            return "";
+            $conditionBaseQuery = "1=1";
+        } else {
+            $conditionBase = array_shift($conditions);
+            static::addConditionParameter($qb, $alias, $conditionBase);
+            $conditionBaseQuery = static::createCondition($alias, $conditionBase, $qb);
         }
-        $conditionBase = array_shift($conditions);
-        static::addConditionParameter($qb, $alias, $conditionBase);
-        $conditionBaseQuery = static::createCondition($alias, $conditionBase, $qb);
         foreach ($conditions as $condition) {
             $conditionQuery = static::createCondition($alias, $condition, $qb);
             $conditionBaseQuery = static::combineConditions($qb, $conditionBaseQuery, $conditionQuery, $conditionLogic);
             static::addConditionParameter($qb, $alias, $condition);
         }
+        $condition = null;
+        // Agrega las condiciones compuestas las condiciones compuestas se consideran igual que un grupo
+        foreach ($compoundConditions as $group) {
+            $condition = static::createGroupCondition($qb, $group, $alias);
+            $conditionBaseQuery = static::combineConditions($qb, $conditionBaseQuery, $condition, $conditionLogic);
+        }
+
         return $conditionBaseQuery;
     }
 
@@ -295,9 +316,9 @@ class QueryFilter
 
     protected static function getParameterKey(string $rootAlias, array $condition, string $postfix = ''): string
     {
-        $alias = static::calculateAlias($rootAlias, $condition);
-        $property = $condition["property"];
-        $key = sprintf(":filter_%s_%s%s", $alias, $property, $postfix);
+        $serialized = serialize($condition);
+        $encodedCondition = sha1($serialized);
+        $key = sprintf(":filter_%s_%s", $encodedCondition, $postfix);
         return $key;
     }
 
