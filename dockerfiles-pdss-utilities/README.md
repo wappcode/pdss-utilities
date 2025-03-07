@@ -47,5 +47,6 @@ Para VSCode agregar la siguiente configuración en launch.json
             "port": 9003,
             "pathMappings": {
                 "/var/www/html": "${workspaceFolder}"
-            }
+            },
+            "hostname": "localhost" // se agrega solo para wsl windows para que funcione
     },
