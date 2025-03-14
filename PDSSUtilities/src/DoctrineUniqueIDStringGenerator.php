@@ -7,7 +7,7 @@ use Doctrine\ORM\Id\AbstractIdGenerator;
 
 class DoctrineUniqueIDStringGenerator extends AbstractIdGenerator
 {
-    public function generate(EntityManagerInterface $em,  $entity): mixed
+    public function generateId(EntityManagerInterface $em, object|null $entity): mixed
     {
         $randomStr = $this->randomString(3);
         $prefix =  rand() . "__";
