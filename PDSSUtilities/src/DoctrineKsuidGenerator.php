@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PDSSUtilities;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,6 +11,8 @@ class DoctrineKsuidGenerator extends AbstractIdGenerator
 {
     // KSUID epoch (2014-05-13T16:53:20Z)
     private const EPOCH_STAMP = 1400000000;
+    private const BASE62_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    private const KSUID_LENGTH = 27;
 
     public function generateId(EntityManagerInterface $em, object|null $entity): mixed
     {
@@ -38,13 +42,11 @@ class DoctrineKsuidGenerator extends AbstractIdGenerator
 
     protected function base62Encode(string $data): string
     {
-        $base62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
         // Convert bytes to a large integer
         $num = gmp_import($data, 1, GMP_MSW_FIRST | GMP_BIG_ENDIAN);
 
         if (gmp_cmp($num, '0') === 0) {
-            return '0';
+            return str_repeat('0', self::KSUID_LENGTH);
         }
 
         $encoded = '';
@@ -52,10 +54,10 @@ class DoctrineKsuidGenerator extends AbstractIdGenerator
 
         while (gmp_cmp($num, '0') > 0) {
             list($num, $remainder) = gmp_div_qr($num, $base);
-            $encoded = $base62[gmp_intval($remainder)] . $encoded;
+            $encoded = self::BASE62_CHARS[gmp_intval($remainder)] . $encoded;
         }
 
         // KSUID should be exactly 27 characters, pad with zeros if needed
-        return str_pad($encoded, 27, '0', STR_PAD_LEFT);
+        return str_pad($encoded, self::KSUID_LENGTH, '0', STR_PAD_LEFT);
     }
 }
